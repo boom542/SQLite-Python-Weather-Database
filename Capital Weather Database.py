@@ -147,12 +147,13 @@ def printdata():
     edit.execute("SELECT count(*) FROM combined WHERE capital = ? AND date = ?", (capital, date))
     amount = edit.fetchone()[0]
     for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-        print(result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
-        print(result[count][4])
-        print(result[count][5]) # Just print the forecast we are on and then each part of it. 
-        print(result[count][6]) # FIXME: REPLACE ALL OF THIS LATER
-        print(result[count][7])
-        print(result[count][8])
+        print("Country:", result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
+        print("Capital:", result[count][4])
+        print("Continent:", result[count][5]) # Just print the forecast we are on and then each part of it. 
+        print("Weather:", result[count][6]) # FIXME: REPLACE ALL OF THIS LATER
+        print("Temperature", result[count][7])
+        print("Forecast Date:", result[count][8])
+        print("\n") # Add new line for better formatting
     input("Press enter to exit") # Turns out the loop means things exit almost instantly due to no user conformation to continue. Add that here.
 
 def createlists():
