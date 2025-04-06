@@ -74,7 +74,7 @@ def create_country_list():
 
 # The following code just needs to add another table to the existing database that will store all of our forecast data.
 def create_forecast_list():
-    edit.execute("CREATE TABLE IF NOT EXISTS forecasts (forecast_id INTEGER PRIMARY KEY, place_id INTEGER, conditions TEXT, temperature float, date DATETIME, FOREIGN KEY (place_id) REFERENCES capitals(place_id) ON DELETE CASCADE)") # Foreign key will be referencing things that are in another table, in this case the place_id in the capitals table. ON DELETE CASCADE will delete anything that used a place_id that is no longer in the database file. This should never occur unless the database is messed with.
+    edit.execute("CREATE TABLE IF NOT EXISTS forecasts (forecast_id INTEGER PRIMARY KEY, place_id INTEGER, conditions TEXT, temperature float, date DATE, FOREIGN KEY (place_id) REFERENCES capitals(place_id) ON DELETE CASCADE)") # Foreign key will be referencing things that are in another table, in this case the place_id in the capitals table. ON DELETE CASCADE will delete anything that used a place_id that is no longer in the database file. This should never occur unless the database is messed with.
     database.commit()
 
 
@@ -88,7 +88,7 @@ def update_forecast_list(): # Update the forecast list
         city = edit.fetchone()[0]
         URL = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric" # Insets the API key and city we want to find into the link
         status = requests.get(URL) # Check status.
-        date = datetime.today().replace(microsecond=0) # replace(microsecond=0) is done to remove the default logging of microseconds, which i dont care about.
+        date = datetime.today().strftime('%Y-%m-%d') # We just need the current date, not time. use strftime to format it. You can see the format used next to it. YYYY-MM-DD.
         if status.status_code == 200: # Should check that the status is the status for ok
             weather_data = status.json() # JSON Stores data.
             weather = weather_data["weather"][0]["description"] # This will get our description of current weather conditions. Weather is like a list and we want to pull what is in that list. In this example its description, which is the first item in the list, so we use [0].
@@ -102,7 +102,7 @@ def update_forecast_list(): # Update the forecast list
 
 #TODO: INNER JOIN STUFF UNDER CONSTRUCTION
 def combine_tables():
-    edit.execute("CREATE TABLE IF NOT EXISTS combined (entry_id INTEGER PRIMARY KEY, forecast_id INTEGER UNIQUE, place_id INTEGER, country TEXT, capital TEXT, continent TEXT, conditions TEXT, temperature float, date DATETIME, FOREIGN KEY (forecast_id) REFERENCES forecasts(forecast_id) ON DELETE CASCADE, FOREIGN KEY (place_id) REFERENCES capitals(place_id) ON DELETE CASCADE)") # Makes a table, this time with two foreign keys. Not much that needs to be said here.
+    edit.execute("CREATE TABLE IF NOT EXISTS combined (entry_id INTEGER PRIMARY KEY, forecast_id INTEGER UNIQUE, place_id INTEGER, country TEXT, capital TEXT, continent TEXT, conditions TEXT, temperature float, date DATE, FOREIGN KEY (forecast_id) REFERENCES forecasts(forecast_id) ON DELETE CASCADE, FOREIGN KEY (place_id) REFERENCES capitals(place_id) ON DELETE CASCADE)") # Makes a table, this time with two foreign keys. Not much that needs to be said here.
     edit.execute("INSERT OR IGNORE INTO combined (forecast_id, place_id, country, capital, continent, conditions, temperature, date) SELECT forecasts.forecast_id, capitals.place_id, capitals.country, capitals.capital, capitals.continent, forecasts.conditions, forecasts.temperature, forecasts.date FROM capitals INNER JOIN forecasts ON capitals.place_id = forecasts.place_id ORDER BY capitals.capital") # Combine the forecasts and capitals tables together based on the place ID. We need to list everything we wanna combine it seems. Put it into the new table i called combined. INNER JOIN is the combine type used here. It ports all listed values over.
     database.commit()
 
