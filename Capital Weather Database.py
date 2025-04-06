@@ -119,10 +119,12 @@ def selectionmenu():
     selectionmenu =  Menu("How do you want to filter your output?")
     selectionmenu.add_option("Select a capital to see data for", lambda: capitalfilter())
     selectionmenu.add_option("Filter by date.", lambda: datefilter())
+    selectionmenu.add_option("Show data", lambda: printdata())
     selectionmenu.show()
 
 
 def capitalfilter():
+    global capital
     edit.execute("SELECT capital, country FROM capitals") # Get both the capital and country columns from capitals and combine them
     templist = edit.fetchall() # Ugly list with a bunch of junk we dont want
     clean_list = [f"{item[0]}, {item[1]}" for item in templist] # Get both the country and capitals and combine them with a " ," in the middle and put them into their own list entry. Do this for each entry.
@@ -131,24 +133,18 @@ def capitalfilter():
         capital, country = capitalmenu.split(", ") # Because the output will have both the capital and country in 1 string. We need to split that. We will use the capital variable. split will split at a certain point we define (", ") and remove the part we defined (", ")
     else: # If it is Washington.
         capital = "Washington, D.C." # Just do it manually its not worth my time if someone else adds a place with a ", " they can fix it themselves.
-    edit.execute("SELECT * FROM combined WHERE capital = ?", (capital,))
-    result = edit.fetchall()
-    edit.execute("SELECT COUNT(*) FROM combined WHERE capital = ?", (capital,))
-    amount = edit.fetchone()[0]
-    for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-        print(result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
-        print(result[count][4])
-        print(result[count][5]) # Just print the forecast we are on and then each part of it. 
-        print(result[count][6]) # FIXME: REPLACE ALL OF THIS LATER
-        print(result[count][7])
-        print(result[count][8])
+
 
 def datefilter():
+    global date
     print("Enter the date you want to filter by (YYYY-MM-DD):")
     date = input()
-    edit.execute("SELECT * FROM combined WHERE date = ?", (date,))
+
+
+def printdata():
+    edit.execute("SELECT * FROM combined WHERE capital = ? AND date = ?", (capital, date))
     result = edit.fetchall()
-    edit.execute("SELECT count(*) FROM combined WHERE date = ?", (date,))
+    edit.execute("SELECT count(*) FROM combined WHERE capital = ? AND date = ?", (capital, date))
     amount = edit.fetchone()[0]
     for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
         print(result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
@@ -157,15 +153,17 @@ def datefilter():
         print(result[count][6]) # FIXME: REPLACE ALL OF THIS LATER
         print(result[count][7])
         print(result[count][8])
+    input("Press enter to exit") # Turns out the loop means things exit almost instantly due to no user conformation to continue. Add that here.
 
 def createlists():
     create_country_list()
     create_forecast_list()
 
 createlists()
-update_forecast_list() #FIXME: ENABLE AGAIN LATER
+#update_forecast_list() #FIXME: ENABLE AGAIN LATER
 combine_tables()
-menu()
+while True:
+    menu()
 
 # TODO: Implement user input and data output so they can select what data they wanna see
 # TODO: Make this user input more advanced
