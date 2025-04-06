@@ -98,7 +98,7 @@ def update_forecast_list(): # Update the forecast list
         else: # If any status other that 200 for ok is returned
             print(f"Error code {status}") # Print the status for troubleshooting
     database.commit() # Save everything. Do this after fetching all data.
-    # TODO: Probably needs some fixing or optimizing at some point but it works well for now.
+    # TODO: Probably needs some fixing or optimizing at some point but it works well for now.4
 
 #TODO: INNER JOIN STUFF UNDER CONSTRUCTION
 def combine_tables():
@@ -118,7 +118,7 @@ def menu():
 def selectionmenu():
     selectionmenu =  Menu("How do you want to filter your output?")
     selectionmenu.add_option("Select a capital to see data for", lambda: capitalfilter())
-    selectionmenu.add_option("Filter by date.", lambda: print("TODO: Implement this."))
+    selectionmenu.add_option("Filter by date.", lambda: datefilter())
     selectionmenu.show()
 
 
@@ -134,6 +134,21 @@ def capitalfilter():
     edit.execute("SELECT * FROM combined WHERE capital = ?", (capital,))
     result = edit.fetchall()
     edit.execute("SELECT COUNT(*) FROM combined WHERE capital = ?", (capital,))
+    amount = edit.fetchone()[0]
+    for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
+        print(result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
+        print(result[count][4])
+        print(result[count][5]) # Just print the forecast we are on and then each part of it. 
+        print(result[count][6]) # FIXME: REPLACE ALL OF THIS LATER
+        print(result[count][7])
+        print(result[count][8])
+
+def datefilter():
+    print("Enter the date you want to filter by (YYYY-MM-DD):")
+    date = input()
+    edit.execute("SELECT * FROM combined WHERE date = ?", (date,))
+    result = edit.fetchall()
+    edit.execute("SELECT count(*) FROM combined WHERE date = ?", (date,))
     amount = edit.fetchone()[0]
     for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
         print(result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
