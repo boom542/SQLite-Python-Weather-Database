@@ -162,8 +162,8 @@ def createlists():
     create_country_list()
     create_forecast_list()
 
-
-#update_forecast_list() #FIXME: ENABLE AGAIN LATER
+createlists()
+update_forecast_list() #FIXME: ENABLE AGAIN LATER
 combine_tables()
 menu()
 
