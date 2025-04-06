@@ -98,9 +98,8 @@ def update_forecast_list(): # Update the forecast list
         else: # If any status other that 200 for ok is returned
             print(f"Error code {status}") # Print the status for troubleshooting
     database.commit() # Save everything. Do this after fetching all data.
-    # TODO: Probably needs some fixing or optimizing at some point but it works well for now.4
 
-#TODO: INNER JOIN STUFF UNDER CONSTRUCTION
+
 def combine_tables():
     edit.execute("CREATE TABLE IF NOT EXISTS combined (entry_id INTEGER PRIMARY KEY, forecast_id INTEGER UNIQUE, place_id INTEGER, country TEXT, capital TEXT, continent TEXT, conditions TEXT, temperature float, date DATE, FOREIGN KEY (forecast_id) REFERENCES forecasts(forecast_id) ON DELETE CASCADE, FOREIGN KEY (place_id) REFERENCES capitals(place_id) ON DELETE CASCADE)") # Makes a table, this time with two foreign keys. Not much that needs to be said here.
     edit.execute("INSERT OR IGNORE INTO combined (forecast_id, place_id, country, capital, continent, conditions, temperature, date) SELECT forecasts.forecast_id, capitals.place_id, capitals.country, capitals.capital, capitals.continent, forecasts.conditions, forecasts.temperature, forecasts.date FROM capitals INNER JOIN forecasts ON capitals.place_id = forecasts.place_id ORDER BY capitals.capital") # Combine the forecasts and capitals tables together based on the place ID. We need to list everything we wanna combine it seems. Put it into the new table i called combined. INNER JOIN is the combine type used here. It ports all listed values over.
@@ -137,7 +136,7 @@ def capitalfilter():
 
 def datefilter():
     global date
-    print("Enter the date you want to filter by (YYYY-MM-DD):")
+    print("Enter the date you want to filter by (YYYY-MM-DD):") # TODO: Impliment showing all at some point
     date = input()
 
 
@@ -147,10 +146,10 @@ def printdata():
     edit.execute("SELECT count(*) FROM combined WHERE capital = ? AND date = ?", (capital, date))
     amount = edit.fetchone()[0]
     for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-        print("Country:", result[count][3]) # FIXME: TEMP CODE HERE. FIX LATER
+        print("Country:", result[count][3])
         print("Capital:", result[count][4])
         print("Continent:", result[count][5]) # Just print the forecast we are on and then each part of it. 
-        print("Weather:", result[count][6]) # FIXME: REPLACE ALL OF THIS LATER
+        print("Weather:", result[count][6])
         print("Temperature", result[count][7])
         print("Forecast Date:", result[count][8])
         print("\n") # Add new line for better formatting
@@ -166,11 +165,8 @@ combine_tables()
 while True:
     menu()
 
-# TODO: Implement user input and data output so they can select what data they wanna see
-# TODO: Make this user input more advanced
+# TODO: Make user input more advanced
 # TODO: Ensure the program is able to get data (Such as all countries on a certain day, period or in a certain continent) and be able to do things like list all known data for it or to try calculate averages such as the common weather conditions or most likely a median/ Average TEMP
-# TODO: Allow users to save any data worked out in another table.
-# TODO: Implement a proper menu system after any prototyping (Hopefully using things like arrow keys and enter)
 # TODO: Figure out someway to have parts of the program run automatically skipping any UI such as adding new forecasts. Potentially or ideally implement some sort of system with flags such as running program.py --update-forecast to just run a forecast update.
 # TODO: Have the system it is running on run the forecast update function on schedule automatically (Such as every few hours or every day at 6:00). Not really involved with the actual program itself but might as well put it here why not.
 
