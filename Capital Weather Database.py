@@ -6,6 +6,10 @@ from pymenu import Menu, select_menu # Pymenu in not in python by default. pip i
 
 API_KEY = "e0fc1abd3382817e1dc217bd3bd0b3b4" # Needed to use the API for OpenWeatherMap. This is limited to 1000 requests a day but we should be fine with our country list.
 
+# Set capital and date to all cause we wanna show everything even if the user doesnt select that by default.
+capital = "All"
+date = "All"
+
 # The code below is gonna be needed to set a bunch of critical stuff involving the databases.
 script_path = os.path.dirname(__file__) # Get the path of where the program is stored
 file = os.path.join(script_path, "database.db") # Join the path with the file name for use within the program. It can simply be used in place of the file name.
@@ -126,9 +130,9 @@ def capitalfilter():
     global capital
     edit.execute("SELECT capital, country FROM capitals") # Get both the capital and country columns from capitals and combine them
     templist = edit.fetchall() # Ugly list with a bunch of junk we dont want
-    clean_list = [f"{item[0]}, {item[1]}" for item in templist] # Get both the country and capitals and combine them with a " ," in the middle and put them into their own list entry. Do this for each entry.
+    clean_list = [f"{item[0]}, {item[1]}" for item in templist] + ["All"] # Get both the country and capitals and combine them with a " ," in the middle and put them into their own list entry. Do this for each entry. Also add "All" as an option for them to select everything
     capitalmenu = select_menu.create_select_menu(clean_list, "Select a country to see results for") # Put all the results into a menu, run the menu and return what the user selected
-    if capitalmenu != "Washington, D.C., United States": # Error with splitting with Washington, D.C. due to the ,  in its name.
+    if capitalmenu != "Washington, D.C., United States" and capitalmenu != "All": # Error with splitting with Washington, D.C. due to the ,  in its name. Also fails to split All.
         capital, country = capitalmenu.split(", ") # Because the output will have both the capital and country in 1 string. We need to split that. We will use the capital variable. split will split at a certain point we define (", ") and remove the part we defined (", ")
     else: # If it is Washington.
         capital = "Washington, D.C." # Just do it manually its not worth my time if someone else adds a place with a ", " they can fix it themselves.
@@ -136,14 +140,21 @@ def capitalfilter():
 
 def datefilter():
     global date
-    print("Enter the date you want to filter by (YYYY-MM-DD):") # TODO: Impliment showing all at some point
+    print("Enter the date you want to filter by (YYYY-MM-DD) or All:") # TODO: Impliment showing all at some point
     date = input()
 
-
 def printdata():
-    edit.execute("SELECT * FROM combined WHERE capital = ? AND date = ?", (capital, date))
+    if capital == "All" and date == "All": # If the user wanted to select everything 
+        where = ""
+    elif capital != "All" and date == "All": # If the user wanted to select a capital but not dates
+        where = f" WHERE capital = '{capital}'"
+    elif capital == "All" and date != "All": # If the user wanted to select dates but not a capital
+        where = f" WHERE date = '{date}'"
+    else: # If the user wanted to select both
+        where = f" WHERE capital = '{capital}' AND date = '{date}'"
+    edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
     result = edit.fetchall()
-    edit.execute("SELECT count(*) FROM combined WHERE capital = ? AND date = ?", (capital, date))
+    edit.execute(f"SELECT count(*) FROM combined{where}")
     amount = edit.fetchone()[0]
     for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
         print("Country:", result[count][3])
