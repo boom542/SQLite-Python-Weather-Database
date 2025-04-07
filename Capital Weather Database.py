@@ -123,8 +123,8 @@ def selectionmenu():
     selectionmenu =  Menu("How do you want to filter your output?")
     selectionmenu.add_option("Select a capital to see data for", lambda: capitalfilter())
     selectionmenu.add_option("Filter by date.", lambda: datefilter())
-    selectionmenu.add_option("Show data", lambda: printdata())
     selectionmenu.add_option("Add averages toggle", lambda: averagetoggle())
+    selectionmenu.add_option("Show data", lambda: printdata())
     selectionmenu.show()
 
 def averagetoggle():
@@ -166,7 +166,7 @@ def printdata():
         currentavg = 0
         for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
             currentavg = currentavg + int(result[count][0]) # Get the temp from the result, convert to int and add the the current avg
-        currentavg = currentavg / amount
+        currentavg = currentavg / amount # Calc the average by taking the final total and dividing it by total entries
         print("Average temperature:", currentavg)
     else:
         edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
