@@ -6,9 +6,10 @@ from pymenu import Menu, select_menu # Pymenu in not in python by default. pip i
 
 API_KEY = "e0fc1abd3382817e1dc217bd3bd0b3b4" # Needed to use the API for OpenWeatherMap. This is limited to 1000 requests a day but we should be fine with our country list.
 
-# Set capital and date to all cause we wanna show everything even if the user doesnt select that by default.
+# Set capital and date to all cause we wanna show everything even if the user doesnt select that by default and not calculate averages by default.
 capital = "All"
 date = "All"
+average = "No"
 
 # The code below is gonna be needed to set a bunch of critical stuff involving the databases.
 script_path = os.path.dirname(__file__) # Get the path of where the program is stored
@@ -123,8 +124,13 @@ def selectionmenu():
     selectionmenu.add_option("Select a capital to see data for", lambda: capitalfilter())
     selectionmenu.add_option("Filter by date.", lambda: datefilter())
     selectionmenu.add_option("Show data", lambda: printdata())
+    selectionmenu.add_option("Add averages toggle", lambda: averagetoggle())
     selectionmenu.show()
 
+def averagetoggle():
+    global average
+    print("Do you want to calculate the average temperature for the selected data? (Yes / No)")
+    average = input()
 
 def capitalfilter():
     global capital
@@ -152,18 +158,29 @@ def printdata():
         where = f" WHERE date = '{date}'"
     else: # If the user wanted to select both
         where = f" WHERE capital = '{capital}' AND date = '{date}'"
-    edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
-    result = edit.fetchall()
-    edit.execute(f"SELECT count(*) FROM combined{where}")
-    amount = edit.fetchone()[0]
-    for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-        print("Country:", result[count][3])
-        print("Capital:", result[count][4])
-        print("Continent:", result[count][5]) # Just print the forecast we are on and then each part of it. 
-        print("Weather:", result[count][6])
-        print("Temperature", result[count][7])
-        print("Forecast Date:", result[count][8])
-        print("\n") # Add new line for better formatting
+    if average == "Yes": # If the user has set calc temp average to true
+        edit.execute(f"SELECT temperature FROM combined{where}") # Should attach the string containing instructions if it exists.
+        result = edit.fetchall()
+        edit.execute(f"SELECT count(temperature) FROM combined{where}")
+        amount = edit.fetchone()[0]
+        currentavg = 0
+        for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
+            currentavg = currentavg + int(result[count][0]) # Get the temp from the result, convert to int and add the the current avg
+        currentavg = currentavg / amount
+        print("Average temperature:", currentavg)
+    else:
+        edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
+        result = edit.fetchall()
+        edit.execute(f"SELECT count(*) FROM combined{where}")
+        amount = edit.fetchone()[0]
+        for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
+            print("Country:", result[count][3])
+            print("Capital:", result[count][4])
+            print("Continent:", result[count][5]) # Just print the forecast we are on and then each part of it. 
+            print("Weather:", result[count][6])
+            print("Temperature", result[count][7])
+            print("Forecast Date:", result[count][8])
+            print("\n") # Add new line for better formatting
     input("Press enter to exit") # Turns out the loop means things exit almost instantly due to no user conformation to continue. Add that here.
 
 def createlists():
