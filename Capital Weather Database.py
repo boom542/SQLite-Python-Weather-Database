@@ -3,6 +3,7 @@ import os # Gonna need this for ensuring things stay in the same folder as the p
 import requests # Need this to do things such as request the api for retrieving place weather.
 from datetime import datetime # Need this to get the date and time for our forecasts table.
 from pymenu import Menu, select_menu # Pymenu in not in python by default. pip install pymenu-console should do the trick on most systems. Its basic but it does the trick and saves me making one myself.
+import argparse # Used to get commandline arguments
 
 API_KEY = "e0fc1abd3382817e1dc217bd3bd0b3b4" # Needed to use the API for OpenWeatherMap. This is limited to 1000 requests a day but we should be fine with our country list.
 
@@ -116,7 +117,7 @@ def menu():
     menu.add_option("Get weather data", lambda: selectionmenu())
     menu.add_option("Update Forecast", lambda: update_forecast_list())
     menu.add_option("Create lists.", lambda: createlists())
-    menu.add_option("Exit", lambda: print("test"))
+    menu.add_option("Exit", lambda: quit())
     menu.show()
 
 def selectionmenu():
@@ -130,7 +131,7 @@ def selectionmenu():
 def averagetoggle():
     global average
     print("Do you want to calculate the average temperature for the selected data? (Yes / No)")
-    average = input()
+    averagechoice = input()
 
 def capitalfilter():
     global capital
@@ -187,11 +188,24 @@ def createlists():
     create_country_list()
     create_forecast_list()
 
-createlists()
-#update_forecast_list() #FIXME: ENABLE AGAIN LATER
-combine_tables()
-while True:
-    menu()
+arguments = argparse.ArgumentParser() # Create a thing that looks for arguments.
+arguments.add_argument("-update", action="store_true", help="Create (If not existent), update and combine all the weather " \
+"databases") # Create a valid argument for the user. action="store_true" just means it will set to true if the user adds it and therefore will activate the updating of the lists if used in the if statement below
+selectedarguments = arguments.parse_args() # Get whatever arguments the user used
+if selectedarguments.update: # If the user decided to use the update argument
+    createlists()
+    update_forecast_list()
+    combine_tables()
+else: # If the user did not use the update argument
+    while True:
+        menu()
+
+# LEGACY CODE BELOW TO USE FOR DEBUGGING OR TESTING
+#createlists()
+#update_forecast_list()
+#combine_tables()
+#while True:
+#    menu()
 
 # TODO: Make user input more advanced
 # TODO: Ensure the program is able to get data (Such as all countries on a certain day, period or in a certain continent) and be able to do things like list all known data for it or to try calculate averages such as the common weather conditions or most likely a median/ Average TEMP
