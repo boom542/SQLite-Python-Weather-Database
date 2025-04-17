@@ -6,12 +6,14 @@ Should create and update an SQL database for capital countries’ weather using 
 This has Menus and Terminal flags.
 
 Menu Example:
-``` Choose what you want to do 
+```
+Choose what you want to do 
 
 1) Get weather data
 2) Update Forecast
 3) Create lists.
-4) Exit ```
+4) Exit 
+```
 
 Example of the flag in use: `python "Capital Weather Database.py" -update`
 
