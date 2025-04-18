@@ -4,10 +4,11 @@ import requests # Need this to do things such as request the api for retrieving 
 from datetime import datetime # Need this to get the date and time for our forecasts table.
 from pymenu import Menu, select_menu # Pymenu in not in python by default. pip install pymenu-console should do the trick on most systems. Its basic but it does the trick and saves me making one myself.
 import argparse # Used to get commandline arguments
+from dotenv import load_dotenv
 
-API_KEY = "e0fc1abd3382817e1dc217bd3bd0b3b4" # Needed to use the API for OpenWeatherMap. This is limited to 1000 requests a day but we should be fine with our country list.
-
-# Set capital and date to all cause we wanna show everything even if the user doesnt select that by default and not calculate averages by default.
+# Set capital and date to all cause we wanna show everything even if the user doesnt select that by default and not calculate averages by default. Also set the API key.
+load_dotenv() # load .env
+API_KEY = os.getenv("API_KEY") # Get the API key from the .env. This requires OS.
 capital = "All"
 date = "All"
 average = "No"

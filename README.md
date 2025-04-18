@@ -21,5 +21,8 @@ Example of the flag in use: `python "Capital Weather Database.py" -update`
 <h2>Requirements and info</h2>
 Requires a Recent version of Python. Written for 3.11 but should work for anything similar
 Tested on Linux. Should work with most other systems with python support.
-Requires PyMenu: `pip install pymenu-console`
+Requires PyMenu: `pip3 install pymenu-console`
+Requires dotenv: `pip3 install python-dotenv`
 Menu Requires around 40 lines of text
+
+Edit .env and include your OpenWeatherMap API key
