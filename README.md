@@ -19,10 +19,11 @@ Choose what you want to do
 Example of the flag in use: `python "Capital Weather Database.py" -update`
 
 <h2>Requirements and info</h2>
+
 Requires a Recent version of Python. Written for 3.11 but should work for anything similar
 Tested on Linux. Should work with most other systems with python support.
 Requires PyMenu: `pip3 install pymenu-console`
 Requires dotenv: `pip3 install python-dotenv`
 Menu Requires around 40 lines of text
 
-Edit .env and include your OpenWeatherMap API key
+Rename .env-contents to .env and enter your API key if you are not going to edit the code to just contain your API key.
