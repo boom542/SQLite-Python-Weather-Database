@@ -174,6 +174,7 @@ def printdata():
         currentavg = round(currentavg / amount, 5)
         currentavg = str(currentavg) # Calc the average by taking the final total and dividing it by total entries
         output = "Average temperature to 5 d.p: " +  currentavg.replace(",","")
+        print(output)
         return output
     else:
         edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
@@ -195,6 +196,7 @@ def printdata():
             sqlouput = str(result[count][8])
             output = output + "Forecast Date: " + sqlouput + "\n"
             output = output + "\n" # Add new line for better formatting
+        print(output)
         return output
     #input("Press enter to exit") # Turns out the loop means things exit almost instantly due to no user conformation to continue. Add that here.
 
@@ -224,12 +226,7 @@ def flasksetup(): # TODO: FINISH THIW
         print(capital, date, average)
         return jsonify({"message": printdata()}) # Change to actual output later
     if __name__ == "__main__":
-        server.run(host="0.0.0.0", port=5000)
-
-
-
-
-
+        server.run(debug = False, host="0.0.0.0", port=5000)
 
 arguments = argparse.ArgumentParser() # Create a thing that looks for arguments.
 arguments.add_argument("-update", action="store_true", help="Create (If not existent), update and combine all the weather databases") # Create a valid argument for the user. action="store_true" just means it will set to true if the user adds it and therefore will activate the updating of the lists if used in the if statement below
