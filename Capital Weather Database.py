@@ -207,11 +207,4 @@ else: # If the user did not use the update argument
 #while True:
 #    menu()
 
-# TODO: Make user input more advanced
-# TODO: Ensure the program is able to get data (Such as all countries on a certain day, period or in a certain continent) and be able to do things like list all known data for it or to try calculate averages such as the common weather conditions or most likely a median/ Average TEMP
-# TODO: Figure out someway to have parts of the program run automatically skipping any UI such as adding new forecasts. Potentially or ideally implement some sort of system with flags such as running program.py --update-forecast to just run a forecast update.
-# TODO: Have the system it is running on run the forecast update function on schedule automatically (Such as every few hours or every day at 6:00). Not really involved with the actual program itself but might as well put it here why not.
-
-# TODO: Complete Menu.
-
 # TODO: ADD CODE COMMENTS TO SOME SECTIONS
