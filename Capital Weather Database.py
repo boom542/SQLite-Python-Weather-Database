@@ -131,7 +131,7 @@ def selectionmenu():
 def averagetoggle():
     global average
     print("Do you want to calculate the average temperature for the selected data? (Yes / No)")
-    averagechoice = input()
+    average = input()
 
 def capitalfilter():
     global capital
@@ -166,9 +166,9 @@ def printdata():
         amount = edit.fetchone()[0]
         currentavg = 0
         for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-            currentavg = currentavg + int(result[count][0]) # Get the temp from the result, convert to int and add the the current avg
-        currentavg = currentavg / amount # Calc the average by taking the final total and dividing it by total entries
-        print("Average temperature:", currentavg)
+            currentavg = currentavg + float(result[count][0]) # Get the temp from the result, convert to int and add the the current avg
+        currentavg = round(currentavg / amount, 5) # Calc the average by taking the final total and dividing it by total entries
+        print("Average temperature to 5 d.p:", currentavg)
     else:
         edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
         result = edit.fetchall()
