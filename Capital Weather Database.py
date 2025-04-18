@@ -172,21 +172,30 @@ def printdata():
         for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
             currentavg = currentavg + float(result[count][0]) # Get the temp from the result, convert to int and add the the current avg
         currentavg = round(currentavg / amount, 5) # Calc the average by taking the final total and dividing it by total entries
-        print("Average temperature to 5 d.p:", currentavg)
+        output = "Average temperature to 5 d.p:", currentavg
+        return output
     else:
         edit.execute(f"SELECT * FROM combined{where}") # Should attach the string containing instructions if it exists.
         result = edit.fetchall()
         edit.execute(f"SELECT count(*) FROM combined{where}")
         amount = edit.fetchone()[0]
+        output = ""
         for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-            print("Country:", result[count][3])
-            print("Capital:", result[count][4])
-            print("Continent:", result[count][5]) # Just print the forecast we are on and then each part of it. 
-            print("Weather:", result[count][6])
-            print("Temperature", result[count][7])
-            print("Forecast Date:", result[count][8])
-            print("\n") # Add new line for better formatting
-    input("Press enter to exit") # Turns out the loop means things exit almost instantly due to no user conformation to continue. Add that here.
+            sqlouput = str(result[count][3])
+            output = output + "Country: " + sqlouput + "\n"
+            sqlouput = str(result[count][4])
+            output = output + "Capital: " + sqlouput +"\n"
+            sqlouput = str(result[count][5])
+            output = output + "Continent: " + sqlouput + "\n"
+            sqlouput = str(result[count][6]) # Just print the forecast we are on and then each part of it. 
+            output = output + "Weather:" + sqlouput + "\n"
+            sqlouput = str(result[count][7])
+            output = output + "Temperature: " + sqlouput + "\n"
+            sqlouput = str(result[count][8])
+            output = output + "Forecast Date: " + sqlouput + "\n"
+            output = output + "\n" # Add new line for better formatting
+        return output
+    #input("Press enter to exit") # Turns out the loop means things exit almost instantly due to no user conformation to continue. Add that here.
 
 def createlists():
     create_country_list()
@@ -212,8 +221,7 @@ def flasksetup(): # TODO: FINISH THIW
         average = data.get("average")
         #printdata() # Call this for now. Needs changing later but this is for debugging rn
         print(capital, date, average)
-        printdata()
-        return jsonify({"message": "Test"}) # Change to actual output later
+        return jsonify({"message": printdata()}) # Change to actual output later
     if __name__ == "__main__":
         server.run(host="0.0.0.0", port=5000)
 
