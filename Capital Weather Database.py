@@ -15,13 +15,15 @@ date = "All"
 average = "No"
 
 # The code below is gonna be needed to set a bunch of critical stuff involving the databases.
-script_path = os.path.dirname(__file__) # Get the path of where the program is stored
-file = os.path.join(script_path, "database.db") # Join the path with the file name for use within the program. It can simply be used in place of the file name.
-# make a database if it does not exist or connect an existing one.
-database = SQL.connect(file)
-# Create a cursor object to interact with the database
-edit = database.cursor()
-edit.execute("PRAGMA foreign_keys = on") # PRAGMA is basically the command to change any database settings. This is specific to SQLite unlike some other SQL commands which work across other SQL databases.
+def crit():
+    global database, edit
+    script_path = os.path.dirname(__file__) # Get the path of where the program is stored
+    file = os.path.join(script_path, "database.db") # Join the path with the file name for use within the program. It can simply be used in place of the file name.
+    # make a database if it does not exist or connect an existing one.
+    database = SQL.connect(file)
+    # Create a cursor object to interact with the database
+    edit = database.cursor()
+    edit.execute("PRAGMA foreign_keys = on") # PRAGMA is basically the command to change any database settings. This is specific to SQLite unlike some other SQL commands which work across other SQL databases.
 
 def create_country_list():
     # A good chunk of the code underneath is made by AI to just generate a database containing a ton of capital cities and the countries they belong to. I am not willing to manually add every single country I want. I am editing this code though because i plan to maybe use some of it again later or integrate this file into other programs. I will also be adding comments on the code.
@@ -198,8 +200,9 @@ def flasksetup(): # TODO: FINISH THIW
     @server.route("/")
     def index(): # The main page that will show if the user goes to the IP.
         return render_template("index.html")
-    @server.route("/process") # /Recieving and sending page data on the main page
+    @server.route("/process", methods = ["POST"]) # /Recieving and sending page data on the main page
     def process():
+        crit()
         global capital, date, average
         data = request.get_json() # Get the data from the javascript sending user input from the page
         capital = data.get("capital")
@@ -207,10 +210,11 @@ def flasksetup(): # TODO: FINISH THIW
         if date == "": # If the user entered no date on the site then date should return blank
             date = "All" # Set it to all for later
         average = data.get("average")
-        printdata() # Call this for now. Needs changing later but this is for debugging rn
-        return jsonify({"message": "Success"}) # Change to actual output later
+        #printdata() # Call this for now. Needs changing later but this is for debugging rn
+        message = printdata()
+        return jsonify({"message": message}) # Change to actual output later
     if __name__ == "__main__":
-        server.run(debug=True, host="0.0.0.0", port=5000)
+        server.run(host="0.0.0.0", port=5000)
 
 
 
@@ -222,6 +226,7 @@ arguments.add_argument("-update", action="store_true", help="Create (If not exis
 arguments.add_argument("-web", action="store_true", help="Will set up a web interface to use the program with")
 selectedarguments = arguments.parse_args() # Get whatever arguments the user used
 if selectedarguments.update: # If the user decided to use the update argument
+    crit()
     createlists()
     update_forecast_list()
     combine_tables()
@@ -229,6 +234,7 @@ elif selectedarguments.web: # If the user decided to use the web argument
     flasksetup() # Starts the flask web server stuff
 else: # If the user did not use the update argument
     while True:
+        crit()
         menu()
 
 # LEGACY CODE BELOW TO USE FOR DEBUGGING OR TESTING
