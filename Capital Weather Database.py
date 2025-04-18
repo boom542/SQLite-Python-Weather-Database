@@ -206,8 +206,10 @@ def createlists():
 
 #Web server junk
 
-def flasksetup(): # TODO: FINISH THIW
-    print("WARNING: EXPERIMENTAL")
+def flasksetup():
+    print("NOTE: This should probably not be exposed to the public internet.")
+    print("Use -tui to use the terminal")
+    print("Use -update to update the databases")
     server = Flask(__name__) # Create a flask server.
     @server.route("/")
     def index(): # The main page that will show if the user goes to the IP.
@@ -230,19 +232,19 @@ def flasksetup(): # TODO: FINISH THIW
 
 arguments = argparse.ArgumentParser() # Create a thing that looks for arguments.
 arguments.add_argument("-update", action="store_true", help="Create (If not existent), update and combine all the weather databases") # Create a valid argument for the user. action="store_true" just means it will set to true if the user adds it and therefore will activate the updating of the lists if used in the if statement below
-arguments.add_argument("-web", action="store_true", help="Will set up a web interface to use the program with")
+arguments.add_argument("-tui", action="store_true", help="Will open a terminal menu")
 selectedarguments = arguments.parse_args() # Get whatever arguments the user used
 if selectedarguments.update: # If the user decided to use the update argument
     crit()
     createlists()
     update_forecast_list()
     combine_tables()
-elif selectedarguments.web: # If the user decided to use the web argument
-    flasksetup() # Starts the flask web server stuff
-else: # If the user did not use the update argument
+elif selectedarguments.tui: # If the user decided to use the terminl
     while True:
         crit()
         menu()
+else: # If the user started it normally (Use the web GUI)
+    flasksetup() # Starts the flask web server stuff
 
 # LEGACY CODE BELOW TO USE FOR DEBUGGING OR TESTING
 #createlists()
