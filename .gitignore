@@ -2,4 +2,7 @@
 /menutest.py
 /weather grabber.py
 /database.db
-/database.db-journal
+/database.db-journal#
+
+.env
+
