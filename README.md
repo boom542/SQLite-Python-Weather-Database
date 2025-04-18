@@ -6,6 +6,12 @@ Allows the User to do basic filtering for weather and calculate the average temp
 
 This has Menus and Terminal flags. It also has a basic web interface.
 
+
+![image](https://github.com/user-attachments/assets/80f9be81-3c2d-4256-a154-c85577de6f2f)
+
+![image](https://github.com/user-attachments/assets/33dc2d4f-bb7a-496d-b44d-2afadb01b951)
+
+
 Menu Example:
 ```
 Choose what you want to do 
@@ -25,7 +31,8 @@ Example of the flag in use: `python "Capital Weather Database.py" -update`
 
 <h2>Requirements and info</h2>
 
-Requires a Recent version of Python. Written for 3.11 but should work for anything similar
+Requires a Recent version of Python. Written for 3.11 but should work for anything similar.
+
 Tested mainly on Linux. Confirmed working on Windows. Should work with most other systems with python support.
 
 Requires PyMenu: `pip3 install pymenu-console`
