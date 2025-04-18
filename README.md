@@ -1,7 +1,8 @@
 <h1>SQLite Weather Database using Python</h1> 
 This is a work in progress and probably very bad.
 
-Should create and update an SQL database for capital countries’ weather using OpenWeatherMap.
+Creates and updates an SQL database for capital countries’ weather using OpenWeatherMap.
+Allows the User to do basic filtering for weather and calculate the average temperature of those filtered options.
 
 This has Menus and Terminal flags.
 
@@ -22,5 +23,3 @@ Requires a Recent version of Python. Written for 3.11 but should work for anythi
 Tested on Linux. Should work with most other systems with python support.
 Requires PyMenu: `pip install pymenu-console`
 Menu Requires around 40 lines of text
-
-TODO: Add average calculation eventually.
