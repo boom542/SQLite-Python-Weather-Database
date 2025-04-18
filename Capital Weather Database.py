@@ -203,12 +203,12 @@ def flasksetup(): # TODO: FINISH THIW
         global capital, date, average
         data = request.get_json() # Get the data from the javascript sending user input from the page
         capital = data.get("capital")
-        capital = request.args.get("date")
+        date = data.get("date")
         if date == "": # If the user entered no date on the site then date should return blank
             date = "All" # Set it to all for later
-        capital = request.args.get("average")
+        average = data.get("average")
         printdata() # Call this for now. Needs changing later but this is for debugging rn
-        return jsonify({{"message": "Success"}}) # Change to actual output later
+        return jsonify({"message": "Success"}) # Change to actual output later
     if __name__ == "__main__":
         server.run(debug=True, host="0.0.0.0", port=5000)
 
