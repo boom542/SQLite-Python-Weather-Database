@@ -3,8 +3,9 @@ import os # Gonna need this for ensuring things stay in the same folder as the p
 import requests # Need this to do things such as request the api for retrieving place weather.
 from datetime import datetime # Need this to get the date and time for our forecasts table.
 from pymenu import Menu, select_menu # Pymenu in not in python by default. pip install pymenu-console should do the trick on most systems. Its basic but it does the trick and saves me making one myself.
-import argparse # Used to get commandline arguments
+import argparse # Used to get commandline arguments. Not included by default. 
 from dotenv import load_dotenv
+from flask import Flask, request, jsonify, render_template # Not installed by default. 
 
 # Set capital and date to all cause we wanna show everything even if the user doesnt select that by default and not calculate averages by default. Also set the API key.
 load_dotenv() # load .env
@@ -160,7 +161,7 @@ def printdata():
         where = f" WHERE date = '{date}'"
     else: # If the user wanted to select both
         where = f" WHERE capital = '{capital}' AND date = '{date}'"
-    if average == "Yes": # If the user has set calc temp average to true
+    if average == "Yes" or average == "True": # If the user has set calc temp average to true
         edit.execute(f"SELECT temperature FROM combined{where}") # Should attach the string containing instructions if it exists.
         result = edit.fetchall()
         edit.execute(f"SELECT count(temperature) FROM combined{where}")
@@ -189,14 +190,43 @@ def createlists():
     create_country_list()
     create_forecast_list()
 
+#Web server junk
+
+def flasksetup(): # TODO: FINISH THIW
+    print("WARNING: EXPERIMENTAL")
+    server = Flask(__name__) # Create a flask server.
+    @server.route("/")
+    def index(): # The main page that will show if the user goes to the IP.
+        return render_template("index.html")
+    @server.route("/process") # /Recieving and sending page data on the main page
+    def process():
+        global capital, date, average
+        data = request.get_json() # Get the data from the javascript sending user input from the page
+        capital = data.get("capital")
+        capital = request.args.get("date")
+        if date == "": # If the user entered no date on the site then date should return blank
+            date = "All" # Set it to all for later
+        capital = request.args.get("average")
+        printdata() # Call this for now. Needs changing later but this is for debugging rn
+        return jsonify({{"message": "Success"}}) # Change to actual output later
+    if __name__ == "__main__":
+        server.run(debug=True, host="0.0.0.0", port=5000)
+
+
+
+
+
+
 arguments = argparse.ArgumentParser() # Create a thing that looks for arguments.
-arguments.add_argument("-update", action="store_true", help="Create (If not existent), update and combine all the weather " \
-"databases") # Create a valid argument for the user. action="store_true" just means it will set to true if the user adds it and therefore will activate the updating of the lists if used in the if statement below
+arguments.add_argument("-update", action="store_true", help="Create (If not existent), update and combine all the weather databases") # Create a valid argument for the user. action="store_true" just means it will set to true if the user adds it and therefore will activate the updating of the lists if used in the if statement below
+arguments.add_argument("-web", action="store_true", help="Will set up a web interface to use the program with")
 selectedarguments = arguments.parse_args() # Get whatever arguments the user used
 if selectedarguments.update: # If the user decided to use the update argument
     createlists()
     update_forecast_list()
     combine_tables()
+elif selectedarguments.web: # If the user decided to use the web argument
+    flasksetup() # Starts the flask web server stuff
 else: # If the user did not use the update argument
     while True:
         menu()
