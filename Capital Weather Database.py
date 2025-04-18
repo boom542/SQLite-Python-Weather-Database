@@ -163,7 +163,7 @@ def printdata():
         where = f" WHERE date = '{date}'"
     else: # If the user wanted to select both
         where = f" WHERE capital = '{capital}' AND date = '{date}'"
-    if average == "Yes" or average == "True": # If the user has set calc temp average to true
+    if average == "Yes" or average == True: # If the user has set calc temp average to true
         edit.execute(f"SELECT temperature FROM combined{where}") # Should attach the string containing instructions if it exists.
         result = edit.fetchall()
         edit.execute(f"SELECT count(temperature) FROM combined{where}")
@@ -205,14 +205,15 @@ def flasksetup(): # TODO: FINISH THIW
         crit()
         global capital, date, average
         data = request.get_json() # Get the data from the javascript sending user input from the page
-        capital = data.get("capital")
+        capital = data.get("city")
         date = data.get("date")
         if date == "": # If the user entered no date on the site then date should return blank
             date = "All" # Set it to all for later
         average = data.get("average")
         #printdata() # Call this for now. Needs changing later but this is for debugging rn
-        message = printdata()
-        return jsonify({"message": message}) # Change to actual output later
+        print(capital, date, average)
+        printdata()
+        return jsonify({"message": "Test"}) # Change to actual output later
     if __name__ == "__main__":
         server.run(host="0.0.0.0", port=5000)
 
