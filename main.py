@@ -15,7 +15,7 @@ date = "All"
 average = "No"
 
 # The code below is gonna be needed to set a bunch of critical stuff involving the databases.
-def crit():
+def crit(): # This is done to open this in different places depending on what the user is doing to avoid a crashing bug related to running in different instances or cores i think idk this just fixed it
     global database, edit
     script_path = os.path.dirname(__file__) # Get the path of where the program is stored
     file = os.path.join(script_path, "database.db") # Join the path with the file name for use within the program. It can simply be used in place of the file name.
@@ -129,7 +129,7 @@ def selectionmenu():
     selectionmenu.add_option("Select a capital to see data for", lambda: capitalfilter())
     selectionmenu.add_option("Filter by date.", lambda: datefilter())
     selectionmenu.add_option("Add averages toggle", lambda: averagetoggle())
-    selectionmenu.add_option("Show data", lambda: printdata())
+    selectionmenu.add_option("Show data", lambda: tuiprintdata())
     selectionmenu.show()
 
 def averagetoggle():
@@ -153,6 +153,10 @@ def datefilter():
     global date
     print("Enter the date you want to filter by (YYYY-MM-DD) or All:") # TODO: Impliment showing all at some point
     date = input()
+
+def tuiprintdata(): # Since the menu generally instantly reloads we need to just add a pause to show the user using terminal the results first. This should allow me to do that only if done in the TUI
+    printdata()
+    input("Press Enter to continue.")
 
 def printdata():
     if capital == "All" and date == "All": # If the user wanted to select everything 
@@ -183,13 +187,13 @@ def printdata():
         amount = edit.fetchone()[0]
         output = ""
         for count in range(0, amount): # Go from the first forecast entry to the last forecast entry defined by amount
-            sqlouput = str(result[count][3])
-            output = output + "Country: " + sqlouput + "\n"
+            sqlouput = str(result[count][3]) # Set the variable to the stringed version of the selected tuple.
+            output = output + "Country: " + sqlouput + "\n" # For some reason stringing the tuple here and adding it didn't work??? Anyway doing this fixes it so idc
             sqlouput = str(result[count][4])
             output = output + "Capital: " + sqlouput +"\n"
             sqlouput = str(result[count][5])
             output = output + "Continent: " + sqlouput + "\n"
-            sqlouput = str(result[count][6]) # Just print the forecast we are on and then each part of it. 
+            sqlouput = str(result[count][6])
             output = output + "Weather:" + sqlouput + "\n"
             sqlouput = str(result[count][7])
             output = output + "Temperature: " + sqlouput + "\n"
@@ -224,7 +228,6 @@ def flasksetup():
         if date == "": # If the user entered no date on the site then date should return blank
             date = "All" # Set it to all for later
         average = data.get("average")
-        #printdata() # Call this for now. Needs changing later but this is for debugging rn
         print(capital, date, average)
         return jsonify({"message": printdata()}) # Change to actual output later
     if __name__ == "__main__":
@@ -235,11 +238,11 @@ arguments.add_argument("-update", action="store_true", help="Create (If not exis
 arguments.add_argument("-tui", action="store_true", help="Will open a terminal menu")
 selectedarguments = arguments.parse_args() # Get whatever arguments the user used
 if selectedarguments.update: # If the user decided to use the update argument
-    crit()
+    crit() # Crit opens the database
     createlists()
     update_forecast_list()
     combine_tables()
-elif selectedarguments.tui: # If the user decided to use the terminl
+elif selectedarguments.tui: # If the user decided to use the terminal interface
     while True:
         crit()
         menu()
