@@ -255,5 +255,3 @@ else: # If the user started it normally (Use the web GUI)
 #combine_tables()
 #while True:
 #    menu()
-
-# TODO: ADD CODE COMMENTS TO SOME SECTIONS
