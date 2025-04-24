@@ -1,10 +1,10 @@
 import sqlite3 as SQL # SQLite3 is fine enough for this. Built into python so we use it here. Also just change it so it says SQL in things like commands.
 import os # Gonna need this for ensuring things stay in the same folder as the program.
-import requests # Need this to do things such as request the api for retrieving place weather.
+import requests # Need this to do things such as request the api for retrieving place weather. Not installed by default on windows for some reason it seems.
 from datetime import datetime # Need this to get the date and time for our forecasts table.
 from pymenu import Menu, select_menu # Pymenu in not in python by default. pip install pymenu-console should do the trick on most systems. Its basic but it does the trick and saves me making one myself.
 import argparse # Used to get commandline arguments. Not included by default. 
-from dotenv import load_dotenv
+from dotenv import load_dotenv # Not installed by default
 from flask import Flask, request, jsonify, render_template # Not installed by default. 
 
 # Set capital and date to all cause we wanna show everything even if the user doesnt select that by default and not calculate averages by default. Also set the API key.
