@@ -16,7 +16,7 @@ average = "No"
 
 # The code below is gonna be needed to set a bunch of critical stuff involving the databases.
 def crit(): # This is done to open this in different places depending on what the user is doing to avoid a crashing bug related to running in different instances or cores i think idk this just fixed it
-    global database, edit
+    global database, edit, script_path
     script_path = os.path.dirname(__file__) # Get the path of where the program is stored
     file = os.path.join(script_path, "database.db") # Join the path with the file name for use within the program. It can simply be used in place of the file name.
     # make a database if it does not exist or connect an existing one.
@@ -105,10 +105,31 @@ def update_forecast_list(): # Update the forecast list
             temperature = weather_data["main"]["temp"] # Get the current temperature. Pulling the temp part from the main part of the data.
             print(f"Weather in {city}: The current conditions are described as {weather} and the temperature is {temperature}°C.") # Combine all the data gathered into an output.
             edit.execute("INSERT OR IGNORE INTO forecasts (place_id, conditions, temperature, date) VALUES (?, ?, ?, ?)", (count, weather, temperature, date)) # Insert each value into the correct area in the SQL table
-        else: # If any status other that 200 for ok is returned
-            print(f"Error code {status}") # Print the status for troubleshooting
+        elif status.status_code == 401: # If there is no API key in .env, or it is invalid, it should return a 401 status. It could also be some other error.
+            print("Error status 401: It is likely you have either an invalid or non existent API key in the .env file.")
+            print("Do you want to create a .env with an API key? (Y/N)")
+            print("PLEASE ENSURE .ENV IS DELETED IF EXISTENT")
+            key_creation = input()
+            if key_creation == "Y":
+                env_loc = os.path.join(script_path, ".env") # Make sure .env is put into the same folder as the program and not where it is being ran.
+                env_file = open(env_loc, "a") # Open for appending. Wil create if not existent.
+                print("Please get a valid OpenWeatherMap API key from https://openweathermap.org/api and paste it here.")
+                print("Please enter your OpenWeatherMap API key:")
+                api_key = input()
+                env_file.write(f"API_KEY={api_key}") #Write the API key to the .env
+                env_file.close()
+                print("Please reload the program.")
+                break
+            elif key_creation == "N":
+                print("Ok, exiting.")
+                break
+            else:
+                print("Invalid. Exiting")
+                input("Press enter to exit") # Give the user a chance to read the invalid input message before closing.
+                break
+        else: # If any status other that 200 for ok / 401 for is returned
+            print(f"Error code {status}") # Print the status for troubleshooting 
     database.commit() # Save everything. Do this after fetching all data.
-
 
 def combine_tables():
     edit.execute("CREATE TABLE IF NOT EXISTS combined (entry_id INTEGER PRIMARY KEY, forecast_id INTEGER UNIQUE, place_id INTEGER, country TEXT, capital TEXT, continent TEXT, conditions TEXT, temperature float, date DATE, FOREIGN KEY (forecast_id) REFERENCES forecasts(forecast_id) ON DELETE CASCADE, FOREIGN KEY (place_id) REFERENCES capitals(place_id) ON DELETE CASCADE)") # Makes a table, this time with two foreign keys. Not much that needs to be said here.
