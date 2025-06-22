@@ -234,7 +234,7 @@ def createlists():
 def flasksetup():
     print("NOTE: This should probably not be exposed to the public internet.")
     print("Use -tui to use the terminal")
-    print("Use -update to update the databases")
+    print("Use -update to update the databases -- RUN ON FIRST USE") # This code should be ran on first use to ensure there is an API key and there is atleast some data in the database, as well as ensuring that has been created too.
     server = Flask(__name__) # Create a flask server.
     @server.route("/")
     def index(): # The main page that will show if the user goes to the IP.
