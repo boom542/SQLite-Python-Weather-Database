@@ -253,6 +253,7 @@ def flasksetup():
         print(capital, date, average)
         return jsonify({"message": printdata()}) # Change to actual output later
     if __name__ == "__main__":
+        print("Running on port 5000. Should be accessible from localhost:5000 or your.ip.here.please:5000")
         serve(server, host="0.0.0.0", port=5000) # Start flask / web server using serve from waitress
 
 arguments = argparse.ArgumentParser() # Create a thing that looks for arguments.
