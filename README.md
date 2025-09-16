@@ -44,5 +44,3 @@ Requires Flask: `pip3 install flask`
 Requires Requests: `pip3 install requests` (Found this was installed by default on my linux distro but not on windows)
 
 Menu Requires around 40 lines of vertical terminal space.
-
-Rename .env-contents to .env and enter your API key if you are not going to edit the code to just contain your API key.
