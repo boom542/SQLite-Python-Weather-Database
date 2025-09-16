@@ -6,6 +6,7 @@ from pymenu import Menu, select_menu # Pymenu in not in python by default. pip i
 import argparse # Used to get commandline arguments. Not included by default. 
 from dotenv import load_dotenv # Not installed by default
 from flask import Flask, request, jsonify, render_template # Not installed by default. 
+from waitress import serve # import serve from waitress to serve the website / flask server in prod. Not installed by default. pip install waitress
 
 # Set capital and date to all cause we wanna show everything even if the user doesnt select that by default and not calculate averages by default. Also set the API key.
 load_dotenv() # load .env
@@ -252,7 +253,7 @@ def flasksetup():
         print(capital, date, average)
         return jsonify({"message": printdata()}) # Change to actual output later
     if __name__ == "__main__":
-        server.run(debug = False, host="0.0.0.0", port=5000)
+        serve(server, host="0.0.0.0", port=5000) # Start flask / web server using serve from waitress
 
 arguments = argparse.ArgumentParser() # Create a thing that looks for arguments.
 arguments.add_argument("-update", action="store_true", help="Create (If not existent), update and combine all the weather databases") # Create a valid argument for the user. action="store_true" just means it will set to true if the user adds it and therefore will activate the updating of the lists if used in the if statement below

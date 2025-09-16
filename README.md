@@ -41,6 +41,8 @@ Requires dotenv: `pip3 install python-dotenv`
 
 Requires Flask: `pip3 install flask`
 
+Requires Waitress: `pip3 install waitress`
+
 Requires Requests: `pip3 install requests` (Found this was installed by default on my linux distro but not on windows)
 
 Menu Requires around 40 lines of vertical terminal space.
